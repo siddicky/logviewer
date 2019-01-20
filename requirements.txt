@@ -4,3 +4,4 @@ sanic
 dnspython
 natural
 jinja2
+markdown2
