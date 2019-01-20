@@ -56,7 +56,7 @@ class LogEntry:
         for message in self.messages:
             message.format_html_content()
 
-        return self.app.render_template('base', log_entry=self)
+        return self.app.render_template('logbase', log_entry=self)
     
     def render_plain_text(self):
         return response.text(str(self))
