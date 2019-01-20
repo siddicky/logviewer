@@ -1,4 +1,4 @@
-<div align="center">
+<div align="left">
     <h1>Modmail log viewer</h1>
     <strong><i>A simple webserver to view your selfhosted modmail logs.</i></strong>
     <br>
@@ -10,8 +10,11 @@
 </a>
 
 </div>
-<br>
 
 ## What is this?
 
 In order for you to view your selfhosted logs, you have to deploy this application. Take the url of this app after you deploy it and input it as a config var `LOG_URL` in the modmail bot app.
+
+## Contributing
+
+If you can make improvements in the design and presentation of logs, please make a pull request with changes.
