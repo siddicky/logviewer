@@ -1,12 +1,10 @@
 from datetime import datetime
+import dateutil.parser
 
 from sanic import response
-
-import dateutil.parser
 from natural.date import duration
-from renderers.discord_renderer import DiscordRenderer
-import mistletoe
-from jinja2 import escape
+
+from formatter import format_content_html
 
 
 class LogEntry:
@@ -154,8 +152,4 @@ class Message:
 
     @staticmethod
     def format_html_content(content):
-        content = escape(content)
-        return mistletoe.markdown(content, DiscordRenderer)
-
-        # self.replace("@everyone", "<span class=\"mention\">@everyone</span>")
-        # self.replace("@here", "<span class=\"mention\">@here</span>")
+        return format_content_html(content)
