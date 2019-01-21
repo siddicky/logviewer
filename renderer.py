@@ -28,7 +28,7 @@ class LogEntry:
     
     @property
     def human_closed_at(self):
-        return duration(self.closed_at)
+        return duration(self.closed_at, now=datetime.utcnow())
     
     @property
     def message_groups(self):
