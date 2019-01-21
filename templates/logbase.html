@@ -75,9 +75,9 @@
                 <span class="chatlog__author-name" title="{{ log_entry.closer | string | e }}">{{ log_entry.closer.name}}</span>{% if log_entry.closer.mod %}
                 <span>Closed the thread.</span><span class="system-tag">System</span> {% else %}{% endif %}
                 <span class="chatlog__timestamp">{{ log_entry.human_closed_at }}</span>
-                {% if log_entry.close_messagee %}
+                {% if log_entry.close_message %}
                 <div class="chatlog__content">
-                        {{ log_entry.close_meessage | e }}
+                        {{ log_entry.close_message | e }}
                 </div>
                 {% endif %}
             </div>
