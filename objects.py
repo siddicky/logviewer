@@ -20,7 +20,9 @@ class LogEntry:
         self.creator = User(data['creator'])
         self.recipient = User(data['recipient'])
         self.closer = User(data['closer']) if not self.open else None
-        self.close_message = format_content_html(data.get('close_message'))
+        self.close_message = format_content_html(
+            data.get('close_message') or ''
+        )
         self.messages = [Message(m) for m in data['messages']]
     
     @property
