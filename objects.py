@@ -5,7 +5,7 @@ from sanic import response
 import dateutil.parser
 from natural.date import duration
 from renderers.discord_renderer import DiscordRenderer
-from mistletoe import Document
+import mistletoe
 from jinja2 import escape
 
 
@@ -155,9 +155,7 @@ class Message:
     @staticmethod
     def format_html_content(content):
         content = escape(content)
-
-        with DiscordRenderer() as renderer:
-            return renderer.render(Document(content))
+        return mistletoe.markdown(content, DiscordRenderer)
 
         # self.replace("@everyone", "<span class=\"mention\">@everyone</span>")
         # self.replace("@here", "<span class=\"mention\">@here</span>")

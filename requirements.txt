@@ -5,3 +5,4 @@ dnspython
 natural
 jinja2
 mistletoe
+Pygments
