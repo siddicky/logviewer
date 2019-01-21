@@ -105,3 +105,4 @@ venv.bak/
 *.json
 !app.json
 .DS_Store
+.idea/
