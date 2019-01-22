@@ -12,7 +12,7 @@ def format_content_html(content: str, allow_links: bool = False) -> str:
         return '\x1AM' + encoded + '\x1AM'
 
     # Encode multiline codeblocks (```text```)
-    content = re.sub(r'```+(?:[^`]*?\n)?([^`]+)\n?```+',
+    content = re.sub(r'```+((?:[^`]*?\n)?(?:[^`]+))\n?```+',
                      encode_codeblock,
                      content)
 
@@ -56,7 +56,11 @@ def format_content_html(content: str, allow_links: bool = False) -> str:
 
     def decode_codeblock(m):
         decoded = base64.b64decode(m.group(1).encode()).decode()
-        return '<div class="pre pre--multiline">' + decoded + '</div>'
+        match = re.match('^([^`]*?\n)?([^`]+)$', decoded)
+        lang = match.group(1).strip(' \n\r') or 'plaintext'
+        result = match.group(2)
+
+        return f'<div class="pre pre--multiline lang-{lang}">{result}</div>'
 
     # Decode and process multiline codeblocks
     content = re.sub('\x1AM(.*?)\x1AM', decode_codeblock, content)
