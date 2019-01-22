@@ -57,10 +57,13 @@ def format_content_html(content: str, allow_links: bool = False) -> str:
     def decode_codeblock(m):
         decoded = base64.b64decode(m.group(1).encode()).decode()
         match = re.match('^([^`]*?\n)?([^`]+)$', decoded)
-        lang = match.group(1).strip(' \n\r') or 'plaintext'
+        lang = match.group(1) or ''
+        if not lang.strip(' \n\r'):
+            lang = 'plaintext'
         result = match.group(2)
 
-        return f'<div class="pre pre--multiline lang-{lang}">{result}</div>'
+        return (f'<div class="pre pre--multiline hljs {lang}">{result}'
+                '</div>')
 
     # Decode and process multiline codeblocks
     content = re.sub('\x1AM(.*?)\x1AM', decode_codeblock, content)
