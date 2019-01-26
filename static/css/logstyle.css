@@ -509,6 +509,9 @@ a {
     -webkit-transition: .4s;
     transition: .4s;
   }
+
+
+  * { -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
   
   input:checked + .slider {
     background-color: #7289da;
