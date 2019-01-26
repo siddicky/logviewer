@@ -207,6 +207,10 @@ body {
     body {
         font-size: 85%
     }
+
+    .pre--inline {
+        font-size: 85%
+    }
 }
 
 .chatlog {
