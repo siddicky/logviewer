@@ -32,6 +32,9 @@ app.render_template = render_template
 async def init(app, loop):
     app.db = AsyncIOMotorClient(os.getenv('MONGO_URI')).modmail_bot
 
+    async for entry in app.db.logs.find():
+        print(entry['key'])
+
 
 @app.get('/')
 async def index(request):
