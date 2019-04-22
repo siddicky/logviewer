@@ -71,4 +71,4 @@ async def get_favicon(request):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=os.getenv('PORT', 8000))
+    app.run(host=os.getenv('HOST', '0.0.0.0'), port=os.getenv('PORT', 8000))
