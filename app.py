@@ -1,6 +1,6 @@
 import os 
 
-from sanic import Sanic, response
+from sanic import Sanic, response, Blueprint
 from motor.motor_asyncio import AsyncIOMotorClient
 from jinja2 import Environment, PackageLoader
 
@@ -8,7 +8,6 @@ from objects import LogEntry
 
 
 app = Sanic(__name__)
-
 app.static('/static', './static')
 
 jinja_env = Environment(loader=PackageLoader('app', 'templates'))
@@ -33,13 +32,16 @@ async def init(app, loop):
     app.db = AsyncIOMotorClient(os.getenv('MONGO_URI')).modmail_bot
 
 
-@app.get('/')
+bp = Blueprint('logs', host=os.getenv('HOST'))
+
+
+@bp.get('/')
 async def index(request):
     return response.text('Welcome! This simple website is '
                          'used to display your Modmail logs.')
 
 
-@app.get('/logs/raw/<key>')
+@bp.get('/logs/raw/<key>')
 async def get_raw_logs_file(request, key):
     document = await app.db.logs.find_one({'key': key})
 
@@ -51,7 +53,7 @@ async def get_raw_logs_file(request, key):
     return log_entry.render_plain_text()
 
 
-@app.get('/logs/<key>')
+@bp.get('/logs/<key>')
 async def get_logs_file(request, key):
     """Returned the plain text rendered log entry"""
 
@@ -65,10 +67,12 @@ async def get_logs_file(request, key):
     return log_entry.render_html()
 
 
-@app.get('/favicon.ico')
+@bp.get('/favicon.ico')
 async def get_favicon(request):
     return response.redirect('/static/favicon.ico')
 
 
+app.blueprint(bp)
+
 if __name__ == '__main__':
-    app.run(host=os.getenv('HOST', '0.0.0.0'), port=os.getenv('PORT', 8000))
+    app.run(host='0.0.0.0', port=os.getenv('PORT', 8000))
