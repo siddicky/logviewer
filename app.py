@@ -6,6 +6,9 @@ from jinja2 import Environment, PackageLoader
 
 from objects import LogEntry
 
+prefix = os.getenv('URL_PREFIX', '/logs')
+if prefix == 'NONE':
+    prefix = ''
 
 app = Sanic(__name__)
 
@@ -40,7 +43,7 @@ async def index(request):
                          'used to display your Modmail logs.')
 
 
-@app.get('/logs/raw/<key>')
+@app.get(prefix + '/raw/<key>')
 async def get_raw_logs_file(request, key):
     document = await app.db.logs.find_one({'key': key})
 
@@ -52,7 +55,7 @@ async def get_raw_logs_file(request, key):
     return log_entry.render_plain_text()
 
 
-@app.get('/logs/<key>')
+@app.get(prefix + '/<key>')
 async def get_logs_file(request, key):
     """Returned the plain text rendered log entry"""
 
