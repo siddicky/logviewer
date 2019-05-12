@@ -21,7 +21,7 @@ You can update the logviewer in your Heroku account whenever changes are made to
 
 **If you didn't fork this repo before**
 
-Fork the repo by clicking the Fork button at the top right of this page (won't work on mobile site). Then on your Heroku account, go to the log viewer application, Deploy tab, and connect the repo named `yourusername/logviewer`. Do a manual deploy of the master branch.
+Fork the repo by clicking the Fork button at the top right of this page (must be on desktop site). Then on your Heroku account, go to the log viewer application, Deploy tab, and connect the repo named `yourusername/logviewer`. Do a manual deploy of the master branch.
 
 **If you forked this repo before**
 
