@@ -11,13 +11,14 @@ app = Sanic(__name__)
 
 app.static('/static', './static')
 
+OAUTH2_CLIENT_ID = os.getenv('OAUTH2_CLIENT_ID')
+OAUTH2_CLIENT_SECRET = os.getenv('OAUTH2_CLIENT_SECRET')
+
+if OAUTH2_CLIENT_ID and OAUTH2_CLIENT_SECRET:
+    login_required = True
+
 jinja_env = Environment(loader=PackageLoader('app', 'templates'))
 
-
-# def is_image_url(u):
-#     image_types = ['.png', '.jpg', '.gif', '.jpeg', '.webp']
-#     return any(urlparse(u.lower()).path.endswith(x) for x in image_types)
-#
 
 def render_template(name, *args, **kwargs):
     template = jinja_env.get_template(name + '.html')
@@ -31,7 +32,6 @@ app.render_template = render_template
 @app.listener('before_server_start')
 async def init(app, loop):
     app.db = AsyncIOMotorClient(os.getenv('MONGO_URI')).modmail_bot
-
 
 
 @app.get('/')
