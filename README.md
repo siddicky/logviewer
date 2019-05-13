@@ -40,6 +40,7 @@ To enable discord oauth support in order to log in via discord to view logs, you
 - `OAUTH2_CLIENT_ID` - The id of your bot.
 - `OAUTH2_CLIENT_SECRET` - Get this from the general information section of your bot app in the discord dev portal.
 <img src='https://i.imgur.com/YBavWlV.png' height=100>
+
 - `OAUTH2_REDIRECT_URI` - This will be equal to the url of your log viewer app + `/callback` e.g. `https://logwebsite.com/callback`. You will need to add this same url as a redirect url in the oauth2 section in the discord dev portal. 
 <img src='https://i.imgur.com/evZIWYN.png' height=100>
 
