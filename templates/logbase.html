@@ -12,10 +12,24 @@
     <link rel="stylesheet" href="/static/css/solarized-dark.css">
     <script src="/static/js/highlight.pack.js"></script>
     <script src="/static/js/jquery-3.3.1.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/materialize.css" media="screen,projection" >
+    <link href="/static/css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
+    <link href="/static/css/animate.min.css" type="text/css" rel="stylesheet" media="screen,projection" />
+    <link href="https://fonts.googleapis.com/css?family=Bowlby+One+SC" rel="stylesheet">
 </head>
 
 <body>
+
+        {% block navbar %}
+		
+		{% include 'navbar.html' %}
+
+		{% endblock %}
+    
+    
+<div class='entry'>
+
     <br>
     <div class="info">
         <div class="info__guild-icon-container">
@@ -127,6 +141,8 @@
             </div>
         {% endif %}
     </div>
+</div>
+
     <script>
 
         let messages = document.getElementsByClassName('internal')
@@ -150,6 +166,15 @@
                 }
             }
         }
+
     </script>
+		<script src="/static/js/sweetalert.all.min.js"></script>
+		<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <script>
+        M.AutoInit();
+        $('.dropdown-trigger').dropdown({coverTrigger: false});
+        </script>
 </body>
 </html>
