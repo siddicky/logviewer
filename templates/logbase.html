@@ -71,7 +71,7 @@
 
     <div class="chatlog">
         {% for group in log_entry.message_groups %}
-            <div class="{{group.type}} chatlog__message-group hoverable">
+            <div class="{{group.type}} chatlog__message-group active_hover">
                 <div class="chatlog__author-avatar-container">
                         <img class="chatlog__author-avatar"
                              src="{{ group.author.avatar_url }}"
