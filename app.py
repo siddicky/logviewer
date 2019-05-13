@@ -68,12 +68,9 @@ async def fetch_token(code):
     }
 
     headers = {'Content-Type': 'x-www-form-urlencoded'}
-    
-    print(data)
 
     async with app.session.post(TOKEN_URL, data=data) as resp:
         json = await resp.json()
-        print(json)
         return json
 
 async def get_user_info(token):
@@ -86,7 +83,6 @@ async def get_user_roles(user_id):
     headers = {'Authorization': f'Bot {app.bot_token}'}
     async with app.session.get(url, headers=headers) as resp:
         user = await resp.json()
-        print(user)
     return user.get('roles', [])
 
 app.get_user_roles = get_user_roles
@@ -108,13 +104,11 @@ async def index(request):
 
 @app.get('/login')
 async def login(request):
-    referer = request.headers.get('referer', '/')
-    
-    if referer != '/' and urlparse(referer).netloc != app.netloc:
-        referer = '/' # dont redirect to a different site
-    request['session']['referer'] = referer
-
-    print(request['session'])
+    if not request['session'].get('from'):
+        referer = request.headers.get('referer', '/')
+        if referer != '/' and urlparse(referer).netloc != app.netloc:
+            referer = '/' # dont redirect to a different site
+        request['session']['from'] = referer
 
     data = {
         "scope": "identify",
@@ -129,8 +123,6 @@ async def login(request):
 async def oauth_callback(request):
     if request.args.get('error'):
         return response.redirect('/login')
-
-    print(request['session'])
         
     code = request.args.get('code')
     token = await fetch_token(code)
@@ -139,8 +131,9 @@ async def oauth_callback(request):
         request['session']['access_token'] = access_token
         request['session']['logged_in'] = True
         request['session']['user'] = User(await get_user_info(access_token))
-        print(request['session']['user'])
-        return response.redirect(request['session']['referer'])
+        url = request['session']['from']
+        del request['session']['from']
+        return response.redirect(url)
     return response.redirect('/login')
 
 
