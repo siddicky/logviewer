@@ -90,7 +90,7 @@ def authrequired():
             user = request['session']['user']
 
             config = await app.db.config.find_one({'bot_id': int(app.bot_id)})
-            whitelist = config.get('logviewer_whitelist', [])
+            whitelist = config.get('oauth_whitelist', [])
             
             if int(user['id']) in whitelist:
                 return await func(request, *args, **kwargs)
