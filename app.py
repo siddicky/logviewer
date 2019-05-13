@@ -1,21 +1,38 @@
 import os 
+from functools import wraps
 
-from sanic import Sanic, response
 from motor.motor_asyncio import AsyncIOMotorClient
+from sanic import Sanic, response
+from sanic.exceptions import abort, NotFound, Unauthorized
+from sanic_session import Session, InMemorySessionInterface
+
 from jinja2 import Environment, PackageLoader
 
 from objects import LogEntry
 
-
-app = Sanic(__name__)
-
-app.static('/static', './static')
-
 OAUTH2_CLIENT_ID = os.getenv('OAUTH2_CLIENT_ID')
 OAUTH2_CLIENT_SECRET = os.getenv('OAUTH2_CLIENT_SECRET')
 
+
 if OAUTH2_CLIENT_ID and OAUTH2_CLIENT_SECRET:
-    login_required = True
+    using_oauth = True
+
+app = Sanic(__name__)
+Session(app, interface=InMemorySessionInterface())
+
+app.static('/static', './static')
+
+
+def authrequired():
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(request, *args, **kwargs):
+            if using_oauth and not request['session'].get('logged_in'):
+                abort(401)
+            return await func(request, *args, **kwargs)
+        return wrapper
+    return decorator
+
 
 jinja_env = Environment(loader=PackageLoader('app', 'templates'))
 
@@ -33,14 +50,22 @@ app.render_template = render_template
 async def init(app, loop):
     app.db = AsyncIOMotorClient(os.getenv('MONGO_URI')).modmail_bot
 
+@app.exception(NotFound)
+async def not_found(request, exc):
+    return render_template('not_found')
+
+@app.exception(Unauthorized)
+async def not_found(request, exc):
+    return render_template('unauthorized')
+
 
 @app.get('/')
 async def index(request):
-    return response.text('Welcome! This simple website is '
-                         'used to display your Modmail logs.')
+    return render_template('index')
 
 
 @app.get('/logs/raw/<key>')
+@authrequired()
 async def get_raw_logs_file(request, key):
     document = await app.db.logs.find_one({'key': key})
 
@@ -53,6 +78,7 @@ async def get_raw_logs_file(request, key):
 
 
 @app.get('/logs/<key>')
+@authrequired()
 async def get_logs_file(request, key):
     """Returned the plain text rendered log entry"""
 
@@ -71,4 +97,8 @@ async def get_favicon(request):
     return await response.file('/static/favicon.ico')
 
 if __name__ == '__main__':
-    app.run(host=os.getenv('HOST', '0.0.0.0'), port=os.getenv('PORT', 8000))
+    app.run(
+        host=os.getenv('HOST', '0.0.0.0'), 
+        port=os.getenv('PORT', 8000),
+        debug=bool(os.getenv('DEBUG', False))
+        )
