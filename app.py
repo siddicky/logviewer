@@ -22,6 +22,10 @@ AUTHORIZATION_BASE_URL = API_BASE + '/oauth2/authorize'
 TOKEN_URL = API_BASE + '/oauth2/token'
 ROLE_URL = API_BASE + '/guilds/{guild_id}/members/{user_id}'
 
+prefix = os.getenv('URL_PREFIX', '/logs')
+if prefix == 'NONE':
+    prefix = ''
+
 app = Sanic(__name__)
 app.using_oauth = (OAUTH2_CLIENT_ID and OAUTH2_CLIENT_SECRET)
 app.bot_id = OAUTH2_CLIENT_ID
@@ -145,8 +149,9 @@ async def logout(request):
     request['session'].clear()
     return response.redirect('/')
 
-@app.get('/logs/raw/<key>')
+
 @authrequired()
+@app.get(prefix + '/raw/<key>')
 async def get_raw_logs_file(request, key):
     document = await app.db.logs.find_one({'key': key})
 
@@ -158,8 +163,8 @@ async def get_raw_logs_file(request, key):
     return log_entry.render_plain_text()
 
 
-@app.get('/logs/<key>')
 @authrequired()
+@app.get(prefix + '/<key>')
 async def get_logs_file(request, key):
     """Returned the plain text rendered log entry"""
 
