@@ -21,7 +21,7 @@
                 </li>
                 {% else %}
                 <li>
-                    <a class="dropdown-trigger waves-effect" href="#!" data-target="dropdown1">{{ user.username }}
+                    <a class="dropdown-trigger waves-effect" href="#!" data-target="dropdown1">{{ user.name }}
                         <img class='circle nav-icon' width='25px' src="{{ user.avatar_url }}">
                     </a>
                 </li>
@@ -44,7 +44,7 @@
         <div class="background" style='background-color:#2D2F33'>
         </div>
         <a><img class="circle" src="{{ user.avatar_url }}"></a>
-        <a><span class="grey-text name">{{ user.username }}</span></a>
+        <a><span class="grey-text name">{{ user.name }}</span></a>
         <br>
     </div> 
     <li><a href="/logout" class="waves-effect"><span class="grey-text">Logout</span></a></li>
