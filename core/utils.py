@@ -5,6 +5,7 @@ import inspect
 import datetime
 from discord.enums import DefaultAvatar
 from discord.utils import snowflake_time
+import asyncio
 
 class User:
     def __init__(self, data):
@@ -80,7 +81,7 @@ def get_stack_variable(name):
 def authrequired():
     def decorator(func):
         @wraps(func)
-        async def wrapper(request, *args, **kwargs):
+        async def wrapper(request, key):
             app = request.app
 
             if not app.using_oauth:
@@ -91,16 +92,22 @@ def authrequired():
 
             user = request['session']['user']
 
-            config = await app.db.config.find_one({'bot_id': int(app.bot_id)})
+            config, document = await asyncio.gather(
+                app.db.config.find_one({'bot_id': int(app.bot_id)}),
+                app.db.logs.find_one({'key': key})
+            )
+
             whitelist = config.get('oauth_whitelist', [])
+            if document:
+                whitelist.extend(document.get('oauth_whitelist', []))
             
-            if int(user['id']) in whitelist:
-                return await func(request, *args, **kwargs)
+            if int(user['id']) in whitelist or 'everyone' in whitelist:
+                return await func(request, document)
 
             roles = await app.get_user_roles(user['id'])
             
             if any(int(r) in whitelist for r in roles):
-                return await func(request, *args, **kwargs)
+                return await func(request, document)
             
             abort(401, message='Your account does not have permission to view this page.')
 
