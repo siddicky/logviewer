@@ -11,6 +11,8 @@ dnspython = "*"
 natural = "*"
 sanic-session = "*"
 "Jinja2" = "*"
+aiohttp = "*"
+discord-py = "*"
 
 [dev-packages]
 
