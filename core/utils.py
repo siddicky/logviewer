@@ -1,5 +1,6 @@
 from functools import wraps
 from sanic.exceptions import abort
+from sanic import response
 import inspect
 import datetime
 from discord.enums import DefaultAvatar
@@ -85,7 +86,7 @@ def authrequired():
             if not app.using_oauth:
                 return await func(request, *args, **kwargs)
             elif not request['session'].get('logged_in'):
-                abort(401)
+                return response.redirect('/login')
 
             user = request['session']['user']
 
