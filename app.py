@@ -131,8 +131,8 @@ async def oauth_callback(request):
         request['session']['access_token'] = access_token
         request['session']['logged_in'] = True
         request['session']['user'] = User(await get_user_info(access_token))
-        url = request['session']['from']
-        del request['session']['from']
+        url = request['session'].get('from', '/')
+        request['session']['from'] = None
         return response.redirect(url)
     return response.redirect('/login')
 
