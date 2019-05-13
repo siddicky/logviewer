@@ -1,7 +1,0 @@
-python-dateutil
-motor
-sanic
-dnspython
-natural
-jinja2
-sanic_session

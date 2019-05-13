@@ -150,8 +150,8 @@ async def logout(request):
     return response.redirect('/')
 
 
-@authrequired()
 @app.get(prefix + '/raw/<key>')
+@authrequired()
 async def get_raw_logs_file(request, key):
     document = await app.db.logs.find_one({'key': key})
 
@@ -163,8 +163,8 @@ async def get_raw_logs_file(request, key):
     return log_entry.render_plain_text()
 
 
-@authrequired()
 @app.get(prefix + '/<key>')
+@authrequired()
 async def get_logs_file(request, key):
     """Returned the plain text rendered log entry"""
 
