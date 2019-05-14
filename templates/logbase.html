@@ -9,6 +9,7 @@
     <meta content="{{ log_entry.thread_messages | length }} messages {% if log_entry.open %}(Open){% else %}(Closed){% endif %}" property="og:site_name">
     <meta content="Recipient: {{ log_entry.recipient | string | e }}" property="og:title">
     <meta content='{{ log_entry.recipient.avatar_url }}' property='og:image'>
+    <meta content='Created {{ log_entry.human_created_at }}' property='og:image'>
 
     <link href="/static/css/logstyle.css" rel="stylesheet">
     <link href="/static/css/solarized-dark.css" rel="stylesheet">
