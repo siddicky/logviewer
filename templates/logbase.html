@@ -110,7 +110,7 @@
 
                         {% endif %}
                         {% for attachment in message.attachments %}
-                            <div class="chatlog__attachment">
+                            <div class="chatlog__attachment" id="{{ message.id }}">
                                 <a href="{{ attachment.url }}">
                                     {% if attachment.is_image %}
                                     <img class="chatlog__attachment-thumbnail" src="{{ attachment.url }}" alt="attachment"/>
@@ -152,7 +152,7 @@
 
         function hoverIt(elem) {
             for (let child of elem.children[1].children) {
-                if (child.classList.contains('chatlog__content')) {
+                if (child.classList.contains('chatlog__content') || child.classList.contains('chatlog__attachment')) {
                     let should_add = false
                     if (!elem.classList.contains('perma_hover')) {
                         should_add = true
