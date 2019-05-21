@@ -7,6 +7,7 @@ from discord.enums import DefaultAvatar
 from discord.utils import snowflake_time
 import asyncio
 
+
 class User:
     def __init__(self, data):
         self.name = data['username']
@@ -78,6 +79,7 @@ def get_stack_variable(name):
     finally:
         del stack
 
+
 def authrequired():
     def decorator(func):
         @wraps(func)
@@ -100,15 +102,15 @@ def authrequired():
             whitelist = config.get('oauth_whitelist', [])
             if document:
                 whitelist.extend(document.get('oauth_whitelist', []))
-            
+
             if int(user['id']) in whitelist or 'everyone' in whitelist:
                 return await func(request, document)
 
             roles = await app.get_user_roles(user['id'])
-            
+
             if any(int(r) in whitelist for r in roles):
                 return await func(request, document)
-            
+
             abort(401, message='Your account does not have permission to view this page.')
 
         return wrapper

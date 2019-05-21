@@ -1,4 +1,4 @@
-import os 
+import os
 from functools import wraps
 from urllib.parse import urlencode, urlparse
 
@@ -35,6 +35,7 @@ app.static('/static', './static')
 
 jinja_env = Environment(loader=PackageLoader('app', 'templates'))
 
+
 def render_template(name, *args, **kwargs):
     template = jinja_env.get_template(name + '.html')
     request = get_stack_variable('request')
@@ -45,7 +46,9 @@ def render_template(name, *args, **kwargs):
     kwargs.update(globals())
     return response.html(template.render(*args, **kwargs))
 
+
 app.render_template = render_template
+
 
 @app.listener('before_server_start')
 async def init(app, loop):
@@ -56,6 +59,7 @@ async def init(app, loop):
         app.bot_token = os.getenv('TOKEN')
         app.netloc = urlparse(OAUTH2_REDIRECT_URI).netloc
         print('USING OAUTH2 MODE')
+
 
 async def fetch_token(code):
     data = {
@@ -73,10 +77,12 @@ async def fetch_token(code):
         json = await resp.json()
         return json
 
+
 async def get_user_info(token):
     headers = {"Authorization": f"Bearer {token}"}
     async with app.session.get(f"{API_BASE}/users/@me", headers=headers) as resp:
         return await resp.json()
+
 
 async def get_user_roles(user_id):
     url = ROLE_URL.format(guild_id=app.guild_id, user_id=user_id)
@@ -87,27 +93,31 @@ async def get_user_roles(user_id):
 
 app.get_user_roles = get_user_roles
 
+
 @app.exception(NotFound)
 async def not_found(request, exc):
     return render_template('not_found')
 
+
 @app.exception(Unauthorized)
 async def not_authorized(request, exc):
     return render_template(
-        'unauthorized', 
+        'unauthorized',
         message='You do not have permission to view this page.'
-        )
+    )
+
 
 @app.get('/')
 async def index(request):
     return render_template('index')
+
 
 @app.get('/login')
 async def login(request):
     if not request['session'].get('from'):
         referer = request.headers.get('referer', '/')
         if referer != '/' and urlparse(referer).netloc != app.netloc:
-            referer = '/' # dont redirect to a different site
+            referer = '/'  # dont redirect to a different site
         request['session']['from'] = referer
 
     data = {
@@ -119,11 +129,12 @@ async def login(request):
 
     return response.redirect(f"{AUTHORIZATION_BASE_URL}?{urlencode(data)}")
 
+
 @app.get('/callback')
 async def oauth_callback(request):
     if request.args.get('error'):
         return response.redirect('/login')
-        
+
     code = request.args.get('code')
     token = await fetch_token(code)
     access_token = token.get('access_token')
@@ -139,7 +150,7 @@ async def oauth_callback(request):
     return response.redirect('/login')
 
 
-@app.get('/logout') 
+@app.get('/logout')
 async def logout(request):
     request['session'].clear()
     return response.redirect('/')
@@ -172,7 +183,7 @@ async def get_logs_file(request, document):
 
 if __name__ == '__main__':
     app.run(
-        host=os.getenv('HOST', '0.0.0.0'), 
+        host=os.getenv('HOST', '0.0.0.0'),
         port=os.getenv('PORT', 8000),
         debug=bool(os.getenv('DEBUG', False))
-        )
+    )

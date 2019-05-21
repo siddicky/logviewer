@@ -28,16 +28,16 @@ class LogEntry:
         self.messages = [Message(m) for m in data['messages']]
         self.internal_messages = [m for m in self.messages if m.type == 'internal']
         self.thread_messages = [m for m in self.messages if m.type not in ('internal', 'system')]
-    
+
     @property
     def system_avatar_url(self):
         return 'https://discordapp.com/assets/' \
                'f78426a064bc9dd24847519259bc42af.png'
-    
+
     @property
     def human_closed_at(self):
         return duration(self.closed_at, now=datetime.utcnow())
-    
+
     @property
     def message_groups(self):
         groups = []
@@ -46,7 +46,7 @@ class LogEntry:
             return groups
 
         curr = MessageGroup(self.messages[0].author)
-        
+
         for index, message in enumerate(self.messages):
             next_index = index + 1 if index + 1 < len(self.messages) else index
             next_message = self.messages[next_index]
@@ -56,13 +56,13 @@ class LogEntry:
             if message.is_different_from(next_message):
                 groups.append(curr)
                 curr = MessageGroup(next_message.author)
-        
+
         groups.append(curr)
         return groups
-            
+
     def render_html(self):
         return self.app.render_template('logbase', log_entry=self)
-    
+
     def render_plain_text(self):
         messages = self.messages
         thread_create_time = self.created_at.strftime('%d %b %Y - %H:%M UTC')
@@ -75,7 +75,7 @@ class LogEntry:
             out += f'[M] {self.creator} '
             out += f'created a thread with [R] '
             out += f'{self.recipient} ({self.recipient.id})\n'
-        
+
         out += '────────────────────────────────────────────────\n'
 
         if messages:
@@ -92,7 +92,7 @@ class LogEntry:
 
                 for attachment in message.attachments:
                     base += f'Attachment: {attachment}\n'
-                    
+
                 out += base
 
                 if curr != next_:
@@ -119,16 +119,16 @@ class User:
         self.discriminator = data['discriminator']
         self.avatar_url = data['avatar_url']
         self.mod = data['mod']
-    
-    @property 
+
+    @property
     def default_avatar_url(self):
         return "https://cdn.discordapp.com/embed/avatars/{}.png".format(
             int(self.discriminator) % 5
         )
-    
+
     def __str__(self):
         return f'{self.name}#{self.discriminator}'
-    
+
     def __eq__(self, other):
         return self.id == other.id and self.mod is other.mod
 
@@ -137,7 +137,7 @@ class MessageGroup:
     def __init__(self, author):
         self.author = author
         self.messages = []
-    
+
     @property
     def created_at(self):
         return self.messages[0].human_created_at
@@ -146,13 +146,14 @@ class MessageGroup:
     def type(self):
         return self.messages[0].type
 
+
 class Attachment:
     def __init__(self, data):
-        if isinstance(data, str): # Backwards compatibility
+        if isinstance(data, str):  # Backwards compatibility
             self.id = 0
             self.filename = 'attachment'
             self.url = data
-            self.is_image = True 
+            self.is_image = True
             self.size = 0
         else:
             self.id = int(data['id'])
@@ -160,6 +161,7 @@ class Attachment:
             self.url = data['url']
             self.is_image = data['is_image']
             self.size = data['size']
+
 
 class Message:
     def __init__(self, data):
@@ -176,8 +178,8 @@ class Message:
 
     def is_different_from(self, other):
         return (
-                (other.created_at - self.created_at).total_seconds() > 60
-                or other.author != self.author or other.type != self.type
+            (other.created_at - self.created_at).total_seconds() > 60
+            or other.author != self.author or other.type != self.type
         )
 
     @staticmethod
